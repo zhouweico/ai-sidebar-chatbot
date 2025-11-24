@@ -150,6 +150,35 @@ chrome.runtime.onInstalled.addListener(() => {
     }
   });
 
+  // 主动向已打开的标签页注入内容脚本
+  if (chrome.scripting) {
+    chrome.tabs.query({}, (tabs) => {
+      tabs.forEach(tab => {
+        // 检查标签页URL是否有效
+        if (tab.url && (tab.url.startsWith('http://') || tab.url.startsWith('https://'))) {
+          try {
+            chrome.scripting.executeScript({
+              target: { tabId: tab.id },
+              files: ['dist/content.js']
+            }).catch(error => {
+              console.log('向标签页注入内容脚本失败:', tab.url, error);
+            });
+            
+            // 注入CSS
+            chrome.scripting.insertCSS({
+              target: { tabId: tab.id },
+              files: ['dist/content.css']
+            }).catch(error => {
+              console.log('向标签页注入CSS失败:', tab.url, error);
+            });
+          } catch (error) {
+            console.log('向标签页注入脚本失败:', tab.url, error);
+          }
+        }
+      });
+    });
+  }
+
   // 设置侧边栏行为（如果API可用）
   if (chrome.sidePanel && chrome.sidePanel.setPanelBehavior) {
     try {
