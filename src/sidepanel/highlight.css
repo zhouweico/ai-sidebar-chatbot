@@ -1,0 +1,133 @@
+/*
+  Highlight.js theme with light/dark mode support.
+  - Default (light) theme based on highlight.js default style.
+  - Dark theme based on Atom One Dark.
+*/
+
+:root {
+  --hljs-text: #23241f;
+  --hljs-comment: #888;
+  --hljs-keyword: #880000;
+  --hljs-string: #ab5656;
+  --hljs-number: #000080;
+  --hljs-title: #880000;
+  --hljs-attribute: #000080;
+  --hljs-literal: #000080;
+  --hljs-built_in: #ab5656;
+  --hljs-variable: #ab5656;
+  --hljs-meta: #888;
+  --hljs-emphasis-style: italic;
+  --hljs-strong-weight: bold;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Atom One Dark colors */
+    --hljs-text: #abb2bf;
+    --hljs-comment: #5c6370;
+    --hljs-keyword: #c678dd;
+    --hljs-string: #98c379;
+    --hljs-number: #d19a66;
+    --hljs-title: #61aeee;
+    --hljs-attribute: #d19a66;
+    --hljs-literal: #56b6c2;
+    --hljs-built_in: #e6c07b;
+    --hljs-variable: #d19a66;
+    --hljs-meta: #61aeee;
+    --hljs-emphasis-style: italic;
+    --hljs-strong-weight: bold;
+  }
+}
+
+pre code.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 1em;
+}
+
+code.hljs {
+  padding: 3px 5px;
+}
+
+/* Base styles */
+.hljs {
+  color: var(--hljs-text);
+  background: transparent; /* Let the wrapper provide the background */
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: var(--hljs-comment);
+  font-style: var(--hljs-emphasis-style);
+}
+
+/* Keywords, tags, and titles */
+.hljs-doctag,
+.hljs-keyword,
+.hljs-name,
+.hljs-section,
+.hljs-selector-tag,
+.hljs-title,
+.hljs-title.class_ {
+  color: var(--hljs-keyword);
+}
+
+/* Strings, additions */
+.hljs-addition,
+.hljs-regexp,
+.hljs-string,
+.hljs-meta .hljs-string {
+  color: var(--hljs-string);
+}
+
+/* Variables, attributes, numbers, types */
+.hljs-attr,
+.hljs-attribute,
+.hljs-literal,
+.hljs-number,
+.hljs-template-variable,
+.hljs-type,
+.hljs-variable,
+.hljs-selector-attr,
+.hljs-selector-class,
+.hljs-selector-pseudo {
+  color: var(--hljs-number);
+}
+
+
+/* Built-ins, symbols, links */
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-bullet,
+.hljs-link,
+.hljs-symbol,
+.hljs-selector-id {
+  color: var(--hljs-title); /* Using title color from themes */
+}
+
+
+/* Other tags */
+.hljs-subst,
+.hljs-tag {
+  color: var(--hljs-text);
+}
+
+/* Meta, deletion */
+.hljs-meta,
+.hljs-deletion {
+  color: var(--hljs-meta);
+}
+
+/* Emphasis */
+.hljs-emphasis {
+  font-style: var(--hljs-emphasis-style);
+}
+
+/* Strong */
+.hljs-strong {
+  font-weight: var(--hljs-strong-weight);
+}
+
+.hljs-link {
+  text-decoration: underline;
+}

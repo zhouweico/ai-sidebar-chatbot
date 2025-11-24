@@ -1,0 +1,118 @@
+/* 选中文本工具栏样式 */
+#ai-selection-toolbar {
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.selection-toolbar {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  padding: 2px 5px;
+  display: flex;
+  gap: 2px;
+  border: 1px solid #e5e7eb;
+}
+
+.toolbar-btn {
+  height: 28px;
+  padding: 0 6px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #111827;
+  transition: all 0.2s ease;
+  font-size: 12px;
+}
+
+.toolbar-btn:hover {
+  background: #f3f4f6;
+  color: #2563eb;
+}
+
+.toolbar-btn:active {
+  background: #e5e7eb;
+}
+
+.toolbar-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 4px;
+}
+
+.btn-label {
+  line-height: 1;
+}
+
+.toolbar-btn.caret {
+  width: 28px;
+  padding: 0;
+}
+
+/* 动画定义 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .selection-toolbar {
+    padding: 4px 6px;
+  }
+  
+  .toolbar-btn {
+    height: 28px;
+    padding: 0 8px;
+  }
+}
+.toolbar-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 4px 0 2px;
+}
+
+.brand-icon {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+}
+
+.brand-divider {
+  width: 1px;
+  height: 16px;
+  background: #e5e7eb;
+}
