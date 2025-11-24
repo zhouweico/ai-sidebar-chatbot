@@ -31,13 +31,26 @@ function initPlugin() {
 
 // 加载设置
 function loadSettings() {
-  chrome.runtime.sendMessage({ action: 'getSettings' }, (settings) => {
-    if (settings) {
-      pluginState.isTextSelectionEnabled = settings.enableTextSelection;
-
-      applySettings();
+  try {
+    chrome.runtime.sendMessage({ action: 'getSettings' }, (settings) => {
+      // 检查扩展上下文是否仍然有效
+      if (chrome.runtime.lastError) {
+        console.log('扩展上下文已失效，无法加载设置');
+        return;
+      }
+      if (settings) {
+        pluginState.isTextSelectionEnabled = settings.enableTextSelection;
+        applySettings();
+      }
+    });
+  } catch (error) {
+    // 扩展上下文可能已失效
+    if (error.message && error.message.includes('Extension context invalidated')) {
+      console.log('扩展上下文已失效，跳过设置加载');
+    } else {
+      console.error('加载设置时发生错误:', error);
     }
-  });
+  }
 }
 
 // 设置文本选择功能
@@ -316,24 +329,64 @@ function createSelectionToolbar() {
       }
 
       if (action === 'addToConversation') {
-        chrome.runtime.sendMessage({ action: 'openSidePanel' });
-        setTimeout(() => {
-          chrome.runtime.sendMessage({
-            action: 'processSelectedText',
-            data: { type: 'chat', text: text }
+        try {
+          chrome.runtime.sendMessage({ action: 'openSidePanel' }, () => {
+            if (chrome.runtime.lastError) {
+              console.log('扩展上下文已失效，无法打开侧边栏');
+            }
           });
-        }, 500);
+          setTimeout(() => {
+            try {
+              chrome.runtime.sendMessage({
+                action: 'processSelectedText',
+                data: { type: 'chat', text: text }
+              }, () => {
+                if (chrome.runtime.lastError) {
+                  console.log('扩展上下文已失效，无法发送消息到侧边栏');
+                }
+              });
+            } catch (error) {
+              if (error.message && error.message.includes('Extension context invalidated')) {
+                console.log('扩展上下文已失效，无法发送消息到侧边栏');
+              }
+            }
+          }, 500);
+        } catch (error) {
+          if (error.message && error.message.includes('Extension context invalidated')) {
+            console.log('扩展上下文已失效，无法打开侧边栏');
+          }
+        }
         hideSelectionToolbar();
         return;
       }
 
-      chrome.runtime.sendMessage({ action: 'openSidePanel' });
-      setTimeout(() => {
-        chrome.runtime.sendMessage({
-          action: 'processSelectedText',
-          data: { type: action, text: text }
+      try {
+        chrome.runtime.sendMessage({ action: 'openSidePanel' }, () => {
+          if (chrome.runtime.lastError) {
+            console.log('扩展上下文已失效，无法打开侧边栏');
+          }
         });
-      }, 500);
+        setTimeout(() => {
+          try {
+            chrome.runtime.sendMessage({
+              action: 'processSelectedText',
+              data: { type: action, text: text }
+            }, () => {
+              if (chrome.runtime.lastError) {
+                console.log('扩展上下文已失效，无法发送消息到侧边栏');
+              }
+            });
+          } catch (error) {
+            if (error.message && error.message.includes('Extension context invalidated')) {
+              console.log('扩展上下文已失效，无法发送消息到侧边栏');
+            }
+          }
+        }, 500);
+      } catch (error) {
+        if (error.message && error.message.includes('Extension context invalidated')) {
+          console.log('扩展上下文已失效，无法打开侧边栏');
+        }
+      }
 
       hideSelectionToolbar();
     }
@@ -370,28 +423,68 @@ function handlePageSummary() {
   const pageContent = getPageContent();
 
   // 打开侧边栏
-  chrome.runtime.sendMessage({ action: 'openSidePanel' });
+  try {
+    chrome.runtime.sendMessage({ action: 'openSidePanel' }, () => {
+      if (chrome.runtime.lastError) {
+        console.log('扩展上下文已失效，无法打开侧边栏');
+      }
+    });
+  } catch (error) {
+    if (error.message && error.message.includes('Extension context invalidated')) {
+      console.log('扩展上下文已失效，无法打开侧边栏');
+    }
+  }
 
   // 发送数据到侧边栏
   setTimeout(() => {
-    chrome.runtime.sendMessage({
-      action: 'processPageSummary',
-      data: pageContent
-    });
+    try {
+      chrome.runtime.sendMessage({
+        action: 'processPageSummary',
+        data: pageContent
+      }, () => {
+        if (chrome.runtime.lastError) {
+          console.log('扩展上下文已失效，无法发送页面总结数据到侧边栏');
+        }
+      });
+    } catch (error) {
+      if (error.message && error.message.includes('Extension context invalidated')) {
+        console.log('扩展上下文已失效，无法发送页面总结数据到侧边栏');
+      }
+    }
   }, 500);
 }
 
 // 处理文本对话
 function handleTextChat(text) {
   // 打开侧边栏
-  chrome.runtime.sendMessage({ action: 'openSidePanel' });
+  try {
+    chrome.runtime.sendMessage({ action: 'openSidePanel' }, () => {
+      if (chrome.runtime.lastError) {
+        console.log('扩展上下文已失效，无法打开侧边栏');
+      }
+    });
+  } catch (error) {
+    if (error.message && error.message.includes('Extension context invalidated')) {
+      console.log('扩展上下文已失效，无法打开侧边栏');
+    }
+  }
 
   // 发送数据到侧边栏
   setTimeout(() => {
-    chrome.runtime.sendMessage({
-      action: 'processSelectedText',
-      data: { type: 'chat', text: text }
-    });
+    try {
+      chrome.runtime.sendMessage({
+        action: 'processSelectedText',
+        data: { type: 'chat', text: text }
+      }, () => {
+        if (chrome.runtime.lastError) {
+          console.log('扩展上下文已失效，无法发送消息到侧边栏');
+        }
+      });
+    } catch (error) {
+      if (error.message && error.message.includes('Extension context invalidated')) {
+        console.log('扩展上下文已失效，无法发送消息到侧边栏');
+      }
+    }
   }, 500);
 }
 
