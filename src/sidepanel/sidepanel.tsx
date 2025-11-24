@@ -32,6 +32,8 @@ interface Message {
   thoughts?: string
   showThoughts?: boolean
   isThinking?: boolean
+  appName?: string
+  appId?: string
 }
 
 interface ApiConfig {
@@ -142,6 +144,26 @@ interface MessageItemProps {
 
 function MessageItem({ message, onToggleThoughts, setMagnifiedImage }: MessageItemProps) {
   const isUser = message.role === 'user'
+  const [showCopyButton, setShowCopyButton] = useState(false)
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+  
+  const handleMouseEnter = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+      timeoutRef.current = null
+    }
+    setShowCopyButton(true)
+  }
+  
+  const handleMouseLeave = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+    }
+    timeoutRef.current = setTimeout(() => {
+      setShowCopyButton(false)
+      timeoutRef.current = null
+    }, 300) // 延迟300ms隐藏按钮
+  }
 
   const components: Components = {
     code: CodeBlock,
@@ -173,8 +195,20 @@ function MessageItem({ message, onToggleThoughts, setMagnifiedImage }: MessageIt
       <div className="message-avatar">
         {isUser ? <User size={16} /> : <Sparkles size={16} />}
       </div>
-
       <div className="message-content">
+        {!isUser && (
+          <div className="message-header">
+            {message.appName && (
+              <div className="app-name">{message.appName}</div>
+            )}
+            <div className="message-time">
+              {new Date(message.timestamp).toLocaleTimeString('zh-CN', {
+                hour: '2-digit',
+                minute: '2-digit'
+              })}
+            </div>
+          </div>
+        )}
         {!isUser && (message.thoughts || message.isThinking) && (
           <div className="thinking-section">
             <div
@@ -212,23 +246,40 @@ function MessageItem({ message, onToggleThoughts, setMagnifiedImage }: MessageIt
 
         <div className="message-text">
           {isUser ? (
-            <ReactMarkdown
-              remarkPlugins={[remarkGfm, remarkMath]}
-              rehypePlugins={[
-                rehypeRaw,
-                rehypeKatex,
-                [rehypeHighlight as any, {
-                  languages: {
-                    nginx, json, bash, python, javascript, typescript,
-                    xml, css, sql, yaml, dockerfile, go, java, csharp, cpp
-                  },
-                  ignoreMissing: true
-                }]
-              ]}
-              components={components}
+            <div 
+              className="user-message-container"
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
             >
-              {message.content}
-            </ReactMarkdown>
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm, remarkMath]}
+                rehypePlugins={[
+                  rehypeRaw,
+                  rehypeKatex,
+                  [rehypeHighlight as any, {
+                    languages: {
+                      nginx, json, bash, python, javascript, typescript,
+                      xml, css, sql, yaml, dockerfile, go, java, csharp, cpp
+                    },
+                    ignoreMissing: true
+                  }]
+                ]}
+                components={components}
+              >
+                {message.content}
+              </ReactMarkdown>
+              {showCopyButton && (
+                <button 
+                  className="copy-button"
+                  onClick={() => navigator.clipboard.writeText(message.content)}
+                  title="复制"
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  <Copy size={14} />
+                </button>
+              )}
+            </div>
           ) : (
             <div className="assistant-bubble">
               {message.content ? (
@@ -258,13 +309,6 @@ function MessageItem({ message, onToggleThoughts, setMagnifiedImage }: MessageIt
               )}
             </div>
           )}
-        </div>
-
-        <div className="message-time">
-          {new Date(message.timestamp).toLocaleTimeString('zh-CN', {
-            hour: '2-digit',
-            minute: '2-digit'
-          })}
         </div>
 
         {!isUser && !message.isThinking && message.content && (
@@ -495,7 +539,9 @@ function SidePanel() {
       id: Date.now().toString(),
       role: 'user',
       content,
-      timestamp: Date.now()
+      timestamp: Date.now(),
+      appName: currentApi?.name,
+      appId: currentApi?.id
     }
 
     shouldScrollToBottom.current = true
@@ -508,7 +554,9 @@ function SidePanel() {
       content: '',
       timestamp: Date.now(),
       thoughts: '',
-      showThoughts: true
+      showThoughts: true,
+      appName: currentApi?.name,
+      appId: currentApi?.id
     }
 
     shouldScrollToBottom.current = true
@@ -533,7 +581,9 @@ function SidePanel() {
           id: Date.now().toString(),
           role: 'user',
           content: userContent,
-          timestamp: Date.now()
+          timestamp: Date.now(),
+          appName: currentApi?.name,
+          appId: currentApi?.id
         }
         setMessages(prev => [...prev, userMessage])
         setIsLoading(true)
@@ -544,7 +594,9 @@ function SidePanel() {
           content: '',
           timestamp: Date.now(),
           thoughts: '',
-          showThoughts: true
+          showThoughts: true,
+          appName: currentApi?.name,
+          appId: currentApi?.id
         }
         shouldScrollToBottom.current = true
         setMessages(prev => [...prev, assistantMessage])
@@ -587,7 +639,9 @@ function SidePanel() {
           content: '',
           timestamp: Date.now(),
           thoughts: '',
-          showThoughts: true
+          showThoughts: true,
+          appName: currentApi?.name,
+          appId: currentApi?.id
         }
         shouldScrollToBottom.current = true
         setMessages(prev => [...prev, assistantMessage])

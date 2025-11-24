@@ -141,6 +141,13 @@
   width: 100%;
 }
 
+.message-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
 .message.user {
   flex-direction: row;
   justify-content: flex-end;
@@ -168,6 +175,28 @@
   display: none;
 }
 
+.app-name {
+  font-size: 12px;
+  color: var(--sp-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+}
+
+.message-time {
+  font-size: 11px;
+  color: var(--sp-muted);
+  white-space: nowrap;
+}
+
+.message-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
 
 .message-content {
   flex: 0 1 auto;
@@ -193,22 +222,42 @@
 .message.user .message-text {
   background: var(--sp-user-bubble);
   color: var(--sp-user-text);
+  position: relative;
+}
+
+.user-message-container {
+  position: relative;
+}
+
+.copy-button {
+  position: absolute;
+  bottom: -30px;
+  right: 4px;
+  border: none;
+  background: transparent;
+  color: var(--sp-muted);
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 10;
+}
+
+.user-message-container:hover .copy-button {
+  opacity: 1;
+}
+
+.copy-button:hover {
+  color: var(--sp-text);
+  background: transparent;
 }
 
 .message.assistant .message-text {
   background: transparent;
   padding: 0;
-}
-
-.message-time {
-  font-size: 11px;
-  color: var(--sp-muted);
-  margin-top: 4px;
-  text-align: left;
-}
-
-.message.user .message-time {
-  text-align: right;
 }
 
 .typing-indicator {
