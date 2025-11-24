@@ -822,16 +822,15 @@ function SidePanel() {
                 )}
               </div>
             ))}
-            <div className="api-item add-new-api" onClick={() => {
+          </div>
+          <div className="api-selector-footer">
+            <button className="add-config-btn" onClick={() => {
               setShowApiSelector(false);
               chrome.runtime.openOptionsPage();
             }}>
-              <div className="api-item-info">
-                <div className="api-item-name">添加新应用</div>
-                <div className="api-item-endpoint">配置新的AI服务</div>
-              </div>
               <Plus size={16} />
-            </div>
+              添加新应用
+            </button>
           </div>
         </div>
       )}
