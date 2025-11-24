@@ -25,11 +25,10 @@ function Options() {
   const [editingConfig, setEditingConfig] = React.useState<ApiConfig | null>(null)
   const [iconError, setIconError] = React.useState(false)
   const DEFAULT_ENDPOINT = 'https://api.dify.ai/v1'
-  const DEFAULT_API_KEY = 'app-LOPkrIbTzwniRIJ2QFqoXe5B'
   const [formData, setFormData] = React.useState({
     name: '',
     endpoint: DEFAULT_ENDPOINT,
-    apiKey: DEFAULT_API_KEY
+    apiKey: ''
   })
   const [isValidating, setIsValidating] = React.useState(false)
   const [validationResult, setValidationResult] = React.useState<{valid: boolean, message: string} | null>(null)
@@ -103,7 +102,7 @@ function Options() {
       })
       
       setApiConfigs([...apiConfigs, newConfig])
-      setFormData({ name: '', endpoint: DEFAULT_ENDPOINT, apiKey: DEFAULT_API_KEY })
+      setFormData({ name: '', endpoint: DEFAULT_ENDPOINT, apiKey: '' })
       setShowAddForm(false)
       setValidationResult(null) // 清除验证结果
     } catch (error) {
@@ -336,7 +335,7 @@ function Options() {
                   className="btn btn-secondary" 
                   onClick={() => {
                     setShowAddForm(false)
-                    setFormData({ name: '', endpoint: DEFAULT_ENDPOINT, apiKey: DEFAULT_API_KEY })
+                    setFormData({ name: '', endpoint: DEFAULT_ENDPOINT, apiKey: '' })
                   }}
                 >
                   <X size={16} />
