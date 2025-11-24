@@ -54,6 +54,7 @@ function addSelectionListeners() {
   if (pluginState.selectionListenersAdded) return;
   pluginState.onMouseUpHandler = (e) => {
     if (!pluginState.isTextSelectionEnabled) return;
+    // 检查是否点击在工具栏上，如果是则不隐藏工具栏
     if (e.target && e.target.closest && e.target.closest('#ai-selection-toolbar')) {
       return;
     }
@@ -300,6 +301,7 @@ function createSelectionToolbar() {
 
   // 添加按钮点击事件
   toolbar.addEventListener('click', (e) => {
+    e.stopPropagation(); // 阻止事件冒泡到文档级别
     const btn = e.target.closest('.toolbar-btn');
     if (btn) {
       const action = btn.dataset.action;
@@ -317,8 +319,8 @@ function createSelectionToolbar() {
         chrome.runtime.sendMessage({ action: 'openSidePanel' });
         setTimeout(() => {
           chrome.runtime.sendMessage({
-            action: 'addToConversation',
-            text
+            action: 'processSelectedText',
+            data: { type: 'chat', text: text }
           });
         }, 500);
         hideSelectionToolbar();

@@ -173,11 +173,9 @@ if (chrome.contextMenus && chrome.contextMenus.onClicked) {
         // 打开侧边栏并通过background script处理页面总结
         if (chrome.sidePanel && chrome.sidePanel.open) {
           chrome.sidePanel.open({ tabId: tab.id });
+          // 异步获取实际页面内容
           setTimeout(() => {
-            chrome.runtime.sendMessage({
-              action: 'processPageSummary',
-              tabId: tab.id
-            });
+            handlePageSummary(tab.id, () => {});
           }, 500);
         }
         break;
