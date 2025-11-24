@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import ReactDOM from 'react-dom/client'
-import { Send, RefreshCw, Settings, ChevronDown, X, Check, User, Sparkles, ChevronRight, ThumbsUp, ThumbsDown, Copy, Square, ArrowUp } from 'lucide-react'
+import { Send, RefreshCw, Settings, ChevronDown, X, Check, User, Sparkles, ChevronRight, ThumbsUp, ThumbsDown, Copy, Square, ArrowUp, Plus } from 'lucide-react'
 import ReactMarkdown, { Components } from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
