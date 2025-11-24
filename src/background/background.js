@@ -154,22 +154,42 @@ chrome.runtime.onInstalled.addListener(() => {
   if (chrome.scripting) {
     chrome.tabs.query({}, (tabs) => {
       tabs.forEach(tab => {
-        // 检查标签页URL是否有效
-        if (tab.url && (tab.url.startsWith('http://') || tab.url.startsWith('https://'))) {
+        // 检查标签页URL是否有效且不是特殊页面
+        if (tab.url && (tab.url.startsWith('http://') || tab.url.startsWith('https://')) && 
+            !tab.url.startsWith('chrome://') && !tab.url.startsWith('chrome-extension://') &&
+            !tab.url.startsWith('moz-extension://') && !tab.url.startsWith('edge://') &&
+            !tab.url.startsWith('about:')) {
           try {
-            chrome.scripting.executeScript({
-              target: { tabId: tab.id },
-              files: ['dist/content.js']
-            }).catch(error => {
-              console.log('向标签页注入内容脚本失败:', tab.url, error);
-            });
-            
-            // 注入CSS
-            chrome.scripting.insertCSS({
-              target: { tabId: tab.id },
-              files: ['dist/content.css']
-            }).catch(error => {
-              console.log('向标签页注入CSS失败:', tab.url, error);
+            // 先检查标签页是否存在且可访问
+            chrome.tabs.get(tab.id, (tabInfo) => {
+              if (chrome.runtime.lastError) {
+                console.log('无法访问标签页:', tab.url, chrome.runtime.lastError.message);
+                return;
+              }
+              
+              // 注入内容脚本
+              chrome.scripting.executeScript({
+                target: { tabId: tab.id },
+                files: ['dist/content.js']
+              }, (result) => {
+                if (chrome.runtime.lastError) {
+                  console.log('向标签页注入内容脚本失败:', tab.url, chrome.runtime.lastError.message);
+                } else {
+                  console.log('成功向标签页注入内容脚本:', tab.url);
+                }
+              });
+              
+              // 注入CSS
+              chrome.scripting.insertCSS({
+                target: { tabId: tab.id },
+                files: ['dist/content.css']
+              }, (result) => {
+                if (chrome.runtime.lastError) {
+                  console.log('向标签页注入CSS失败:', tab.url, chrome.runtime.lastError.message);
+                } else {
+                  console.log('成功向标签页注入CSS:', tab.url);
+                }
+              });
             });
           } catch (error) {
             console.log('向标签页注入脚本失败:', tab.url, error);
